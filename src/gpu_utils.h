@@ -5,6 +5,27 @@
 #include <cuda_runtime.h>
 #include <exception>
 #include <pthread.h>
+#include <sys/time.h>
+#include <functional>
+
+// For performance timings
+void QueryPerformanceCounter( uint64_t* val )
+{
+    timeval tv;
+    struct timezone tz = {0, 0};
+    gettimeofday( &tv, &tz );
+    *val = tv.tv_sec * 1000000 + tv.tv_usec;
+}
+
+void write_matrix(const float* X, const long m, const long n) {
+    for(int i = 0; i < m; ++i) {
+        for(int j = 0; j < n; ++j) {
+            std::cout << X[(i * n) + j] << ' ';
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
 
 void cuda_error(cudaError_t e, int code_line) {
     if(e != cudaSuccess) {
