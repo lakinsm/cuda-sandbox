@@ -27,3 +27,11 @@
 *.exe
 *.out
 *.app
+
+#IDE
+.idea
+.idea/*
+
+#Environment
+src/
+
