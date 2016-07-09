@@ -33,5 +33,5 @@
 .idea/*
 
 #Environment
-src/
+bin/*
 
