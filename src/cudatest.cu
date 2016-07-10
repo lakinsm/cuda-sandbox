@@ -125,12 +125,12 @@ int main() {
 
         // Enque the kernel launches
         MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
-        //MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
+        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
 
         // Enque copy back to host
-        HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, k * kmer_count * sizeof(float),
+        HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, kmer_count * T_cols * sizeof(float),
                                      cudaMemcpyDeviceToHost, stream0));
-        HANDLE_ERROR(cudaMemcpyAsync(R2, d_R2, k * kmer_count * sizeof(float),
+        HANDLE_ERROR(cudaMemcpyAsync(R2, d_R2, kmer_count * T_cols * sizeof(float),
                                      cudaMemcpyDeviceToHost, stream1));
         // Block host from proceeding until copy to GPU is complete
         HANDLE_ERROR( cudaEventSynchronize( cp0 ) );
