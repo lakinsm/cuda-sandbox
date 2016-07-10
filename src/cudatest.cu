@@ -107,7 +107,9 @@ int main() {
             for (int b = 0; b < k; ++b) {
                 F1[(m * k) + b] = (float) r1[m + b] - '0';
                 F2[(m * k) + b] = (float) r2[m + b] - '0';
+                std::cout << r1[m+b];
             }
+            std::cout << std::endl;
         }
 
         for (unsigned long i = 0; i < k * kmer_count; ++i) {
