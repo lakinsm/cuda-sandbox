@@ -110,7 +110,7 @@ int main() {
             }
         }
 
-        for (unsigned long i = 0; i < k * kmer_count; i += k * kmer_count) {
+        for (unsigned long i = 0; i < k * kmer_count; ++i) {
             // Enque the memory streams in breadth-first order such that
             // the block scheduler launches kernels optimally
             HANDLE_ERROR(cudaMemcpyAsync(d_F1, F1 + i, k * kmer_count * sizeof(float),
