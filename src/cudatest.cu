@@ -98,8 +98,8 @@ int main() {
     cudaEvent_t cp0, cp1;
     HANDLE_ERROR( cudaStreamCreate( &stream0 ) );
     HANDLE_ERROR( cudaStreamCreate( &stream1 ) );
-    HANDLE_ERROR( cudaEventCreateWithFlags( &cp0, cudaEventDisableTiming ) );
-    HANDLE_ERROR( cudaEventCreateWithFlags( &cp1, cudaEventDisableTiming ) );
+    HANDLE_ERROR( cudaEventCreateWithFlags( &cp0, cudaEventDisableTiming | cudaEventBlockingSync ) );
+    HANDLE_ERROR( cudaEventCreateWithFlags( &cp1, cudaEventDisableTiming | cudaEventBlockingSync ) );
 
     for(unsigned long r = 0; r < NUM_READS; ++r) {
         // Fill F1 and F2 with new data
