@@ -12,6 +12,9 @@ int main() {
     // Parameters
     const int k = 64;
     const int NUM_READS = 100;
+    
+    // Choose device
+    cudaSetDevice(1);
 
     // Training matrix size
     const long T_cols = 100000;
@@ -26,26 +29,26 @@ int main() {
     float *F1, *F2, *d_F1, *d_F2;
 
     // Pinned memory for streaming; will have to account for dynamic size at some point
-    HANDLE_ERROR( cudaHostAlloc( (void**)&F1, k * kmer_count * sizeof(*F1), cudaHostAllocDefault ) );
-    HANDLE_ERROR( cudaHostAlloc( (void**)&F2, k * kmer_count * sizeof(*F2), cudaHostAllocDefault ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&F1, k * kmer_count * sizeof(float), cudaHostAllocDefault ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&F2, k * kmer_count * sizeof(float), cudaHostAllocDefault ) );
 
     // Device memory
-    HANDLE_ERROR( cudaMalloc( (void**)&d_F1, k * kmer_count * sizeof(*d_F1) ) );
-    HANDLE_ERROR( cudaMalloc( (void**)&d_F2, k * kmer_count * sizeof(*d_F2) ) );
+    HANDLE_ERROR( cudaMalloc( (void**)&d_F1, k * kmer_count * sizeof(float) ) );
+    HANDLE_ERROR( cudaMalloc( (void**)&d_F2, k * kmer_count * sizeof(float) ) );
 
     ////////////////////
     // Other Matrices //
     ////////////////////
     // Allocate memory on host
     float *T, *R1, *R2, *d_T, *d_R1, *d_R2;
-    T = (float*)std::malloc(k * T_cols * sizeof(*T));
-    HANDLE_ERROR( cudaHostAlloc( (void**)&R1, kmer_count * T_cols * sizeof(*R1), cudaHostAllocDefault ) );
-    HANDLE_ERROR( cudaHostAlloc( (void**)&R2, kmer_count * T_cols * sizeof(*R2), cudaHostAllocDefault ) );
+    T = (float*)std::malloc(k * T_cols * sizeof(float));
+    HANDLE_ERROR( cudaHostAlloc( (void**)&R1, kmer_count * T_cols * sizeof(float), cudaHostAllocDefault ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&R2, kmer_count * T_cols * sizeof(float), cudaHostAllocDefault ) );
 
     // Device alloc
-    HANDLE_ERROR( cudaMalloc( &d_T, k * T_cols * sizeof(*d_T) ) );
-    HANDLE_ERROR( cudaMalloc( &d_R1, kmer_count * T_cols * sizeof(*d_R1) ) );
-    HANDLE_ERROR( cudaMalloc( &d_R2, kmer_count * T_cols * sizeof(*d_R2) ) );
+    HANDLE_ERROR( cudaMalloc( &d_T, k * T_cols * sizeof(float) ) );
+    HANDLE_ERROR( cudaMalloc( &d_R1, kmer_count * T_cols * sizeof(float) ) );
+    HANDLE_ERROR( cudaMalloc( &d_R2, kmer_count * T_cols * sizeof(float) ) );
 
     // Fill training matrix randomly
     int idx;
@@ -59,9 +62,6 @@ int main() {
 
     // We don't need T on host anymore
     std::free(T);
-
-    // Choose device
-    cudaSetDevice(1);
 
     /* Usually the below would be something like this:
      * int N_THREADS_PER_BLOCK = 256; (or 16x16, 32x8 for 2D)
