@@ -78,8 +78,14 @@ int main() {
      * int N_THREADS_PER_BLOCK = 256; (or 16x16, 32x8 for 2D)
      * int N_BLOCKS_PER_GRID = (N + threadsPerBlock - 1) / threadsPerBlock; for 1D
      */
+    std::cout << "Input dimensions:" << std::endl;
+    std::cout << "Number of elements in features: " << 2* k * kmer_count * NUM_READS  << std::endl;
+    std::cout << "Number of elements in training: " << k * T_cols  << std::endl;
+    std::cout << "Number of elements in result: " << kmer_count * T_cols  << std::endl;
+
     dim3 dimBlock(32, 8);  // Based on comments on StackOverflow for 2D threads
     dim3 dimGrid(T_cols / dimBlock.x, kmer_count / dimBlock.y);
+    std::cout << std::endl << "Grid/Block setup:" << std::endl;
     std::cout << dimGrid.x << ',' << dimGrid.y << ' ' << dimBlock.x << ',' << dimBlock.y << std::endl;
 
     //////////////////
