@@ -11,7 +11,7 @@ int main() {
     /////////////////////
     // Parameters
     const int k = 64;
-    const int NUM_READS = 1000;
+    const int NUM_READS = 100;
 
     // Training matrix size
     const long T_cols = 100000;
@@ -26,12 +26,23 @@ int main() {
     float *F1, *F2, *d_F1, *d_F2;
 
     // Pinned memory for streaming; will have to account for dynamic size at some point
-    HANDLE_ERROR( cudaHostAlloc( (void**)&F1, k * kmer_count * sizeof(*F1), cudaHostAllocDefault ) );
-    HANDLE_ERROR( cudaHostAlloc( (void**)&F2, k * kmer_count * sizeof(*F2), cudaHostAllocDefault ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&F1, k * kmer_count * NUM_READS * sizeof(*F1), cudaHostAllocDefault ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&F2, k * kmer_count * NUM_READS * sizeof(*F2), cudaHostAllocDefault ) );
 
     // Device memory
-    HANDLE_ERROR( cudaMalloc( (void**)&d_F1, k * kmer_count * sizeof(*d_F1) ) );
-    HANDLE_ERROR( cudaMalloc( (void**)&d_F2, k * kmer_count * sizeof(*d_F2) ) );
+    HANDLE_ERROR( cudaMalloc( (void**)&d_F1, k * kmer_count * NUM_READS * sizeof(*d_F1) ) );
+    HANDLE_ERROR( cudaMalloc( (void**)&d_F2, k * kmer_count * NUM_READS * sizeof(*d_F2) ) );
+
+    // Fill F1 and F2 with data
+    for(unsigned long n = 0; n < NUM_READS; ++n) {
+        // Fill F1 and F2 with data
+        for (int m = 0; m < kmer_count; ++m) {
+            for (int b = 0; b < k; ++b) {
+                F1[n * ((m * k) + b) + ((m * k) + b)] = (float) r1[m + b] - '0';
+                F2[n * ((m * k) + b) + ((m * k) + b)] = (float) r2[m + b] - '0';
+            }
+        }
+    }
 
     ////////////////////
     // Other Matrices //
@@ -39,8 +50,8 @@ int main() {
     // Allocate memory on host
     float *T, *R1, *R2, *d_T, *d_R1, *d_R2;
     T = (float*)std::malloc(k * T_cols * sizeof(*T));
-    HANDLE_ERROR( cudaHostAlloc( (void**)&R1, kmer_count * T_cols * sizeof(*R1) ) );
-    HANDLE_ERROR( cudaHostAlloc( (void**)&R2, kmer_count * T_cols * sizeof(*R2) ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&R1, kmer_count * NUM_READS * T_cols * sizeof(*R1) ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&R2, kmer_count * NUM_READS * T_cols * sizeof(*R2) ) );
 
     // Device alloc
     HANDLE_ERROR( cudaMalloc( &d_T, k * T_cols * sizeof(*d_T) ) );
@@ -92,24 +103,23 @@ int main() {
     HANDLE_ERROR( cudaStreamCreate( &stream0 ) );
     HANDLE_ERROR( cudaStreamCreate( &stream1 ) );
 
-    // Handle odd numbers of reads at some point
-    for(unsigned long i = 0; i < k * kmer_count * NUM_READS; i += k*kmer_count*2) {
+    for (unsigned long i = 0; i < k * kmer_count * NUM_READS; i += k * kmer_count * 2) {
         // Enque the memory streams in breadth-first order such that
         // the block scheduler launches kernels optimally
-        HANDLE_ERROR( cudaMemcpyAsync( d_F1, F1+i, k*kmer_count*sizeof(float),
-                                       cudaMemcpyHostToDevice, stream0 ) );
-        HANDLE_ERROR( cudaMemcpyAsync( d_F2, F2+i, k*kmer_count*sizeof(float),
-                                       cudaMemcpyHostToDevice, stream1 ) );
+        HANDLE_ERROR(cudaMemcpyAsync(d_F1, F1 + i, k * kmer_count * NUM_READS * sizeof(float),
+                                     cudaMemcpyHostToDevice, stream0));
+        HANDLE_ERROR(cudaMemcpyAsync(d_F2, F2 + i, k * kmer_count * NUM_READS * sizeof(float),
+                                     cudaMemcpyHostToDevice, stream1));
 
         // Enque the kernel launches
-        MatHamm<<<dimGrid, dimBlock, 0, stream0>>>(d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
-        MatHamm<<<dimGrid, dimBlock, 0, stream1>>>(d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
+        MatHamm <<< dimGrid, dimBlock, 0, stream0 >>>(d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
+        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>>(d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
 
         // Enque copy back to host
-        HANDLE_ERROR( cudaMemcpyAsync( R1+i, d_R1, k*kmer_count*sizeof(float),
-                                       cudaMemcpyDeviceToHost, stream0 ) );
-        HANDLE_ERROR( cudaMemcpyAsync( R2+i, d_R2, k*kmer_count*sizeof(float),
-                                       cudaMemcpyDeviceToHost, stream1 ) );
+        HANDLE_ERROR(cudaMemcpyAsync(R1 + i, d_R1, k * kmer_count * NUM_READS * sizeof(float),
+                                     cudaMemcpyDeviceToHost, stream0));
+        HANDLE_ERROR(cudaMemcpyAsync(R2 + i, d_R2, k * kmer_count * NUM_READS * sizeof(float),
+                                     cudaMemcpyDeviceToHost, stream1));
     }
 
     // Synchronize to ensure work is complete
