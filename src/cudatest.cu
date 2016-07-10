@@ -11,7 +11,7 @@ int main() {
     /////////////////////
     // Parameters
     const int k = 64;
-    const int NUM_READS = 1000;
+    const int NUM_READS = 10;
 
     // Choose device
     cudaSetDevice(1);
