@@ -111,30 +111,27 @@ int main() {
             }
             std::cout << std::endl;
         }
+        // Enque the memory streams in breadth-first order such that
+        // the block scheduler launches kernels optimally
+        HANDLE_ERROR(cudaMemcpyAsync(d_F1, F1, k * kmer_count * sizeof(float),
+                                     cudaMemcpyHostToDevice, stream0));
+        HANDLE_ERROR(cudaMemcpyAsync(d_F2, F2, k * kmer_count * sizeof(float),
+                                     cudaMemcpyHostToDevice, stream1));
 
-        for (unsigned long i = 0; i < k * kmer_count; ++i) {
-            // Enque the memory streams in breadth-first order such that
-            // the block scheduler launches kernels optimally
-            HANDLE_ERROR(cudaMemcpyAsync(d_F1, F1 + i, k * kmer_count * sizeof(float),
-                                         cudaMemcpyHostToDevice, stream0));
-            HANDLE_ERROR(cudaMemcpyAsync(d_F2, F2 + i, k * kmer_count * sizeof(float),
-                                         cudaMemcpyHostToDevice, stream1));
+        // Insert event markers into the stream to tell host
+        // when F1 and F2 are safe to overwrite in host memory
+        HANDLE_ERROR( cudaEventRecord( cp0, stream0 ) );
+        HANDLE_ERROR( cudaEventRecord( cp1, stream1 ) );
 
-            // Insert event markers into the stream to tell host
-            // when F1 and F2 are safe to overwrite in host memory
-            HANDLE_ERROR( cudaEventRecord( cp0, stream0 ) );
-            HANDLE_ERROR( cudaEventRecord( cp1, stream1 ) );
+        // Enque the kernel launches
+        MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
+        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
 
-            // Enque the kernel launches
-            MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
-            MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
-
-            // Enque copy back to host
-            HANDLE_ERROR(cudaMemcpyAsync(R1 + i, d_R1, k * kmer_count * sizeof(float),
-                                         cudaMemcpyDeviceToHost, stream0));
-            HANDLE_ERROR(cudaMemcpyAsync(R2 + i, d_R2, k * kmer_count * sizeof(float),
-                                         cudaMemcpyDeviceToHost, stream1));
-        }
+        // Enque copy back to host
+        HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, k * kmer_count * sizeof(float),
+                                     cudaMemcpyDeviceToHost, stream0));
+        HANDLE_ERROR(cudaMemcpyAsync(R2, d_R2, k * kmer_count * sizeof(float),
+                                     cudaMemcpyDeviceToHost, stream1));
         // Block host from proceeding until copy to GPU is complete
         HANDLE_ERROR( cudaEventSynchronize( cp0 ) );
         HANDLE_ERROR( cudaEventSynchronize( cp1 ) );
