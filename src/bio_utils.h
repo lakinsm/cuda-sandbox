@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cstring>
 #include <random>
+#include <unordered_map>
 
 std::unordered_map<char, std::vector<char> > ambig_table = {
         {'R', {'A', 'G'}},
