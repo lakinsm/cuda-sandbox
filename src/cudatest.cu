@@ -12,7 +12,7 @@ int main() {
     // Parameters
     const int k = 64;
     const int NUM_READS = 100;
-    
+
     // Choose device
     cudaSetDevice(1);
 
@@ -107,9 +107,7 @@ int main() {
             for (int b = 0; b < k; ++b) {
                 F1[(m * k) + b] = (float) r1[m + b] - '0';
                 F2[(m * k) + b] = (float) r2[m + b] - '0';
-                std::cout << r1[m+b];
             }
-            std::cout << std::endl;
         }
         // Enque the memory streams in breadth-first order such that
         // the block scheduler launches kernels optimally
