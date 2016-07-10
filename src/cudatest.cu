@@ -50,8 +50,8 @@ int main() {
     // Allocate memory on host
     float *T, *R1, *R2, *d_T, *d_R1, *d_R2;
     T = (float*)std::malloc(k * T_cols * sizeof(*T));
-    HANDLE_ERROR( cudaHostAlloc( (void**)&R1, kmer_count * NUM_READS * T_cols * sizeof(*R1) ) );
-    HANDLE_ERROR( cudaHostAlloc( (void**)&R2, kmer_count * NUM_READS * T_cols * sizeof(*R2) ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&R1, (int)(kmer_count * NUM_READS * T_cols * sizeof(*R1)) ) );
+    HANDLE_ERROR( cudaHostAlloc( (void**)&R2, (int)(kmer_count * NUM_READS * T_cols * sizeof(*R2)) ) );
 
     // Device alloc
     HANDLE_ERROR( cudaMalloc( &d_T, k * T_cols * sizeof(*d_T) ) );
