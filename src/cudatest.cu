@@ -11,13 +11,13 @@ int main() {
     /////////////////////
     // Parameters
     const int k = 64;
-    const int NUM_READS = 100;
+    const int NUM_READS = 1000;
 
     // Choose device
     cudaSetDevice(1);
 
     // Training matrix size
-    const long T_cols = 100000;
+    const long T_cols = 1000000;
 
     // Example data
     std::string r1 = "TNGGCAGCCCGCCCACGTACAGATGTTGGCGGTGAGCGCTGCGCCTTTACCGGCCCGGCCGGGCATGCTGCGGGTGTGGTGGACGGCGGTCCGGCCGCGC";
@@ -98,8 +98,11 @@ int main() {
     cudaEvent_t cp0, cp1;
     HANDLE_ERROR( cudaStreamCreate( &stream0 ) );
     HANDLE_ERROR( cudaStreamCreate( &stream1 ) );
-    HANDLE_ERROR( cudaEventCreateWithFlags( &cp0, cudaEventDisableTiming | cudaEventBlockingSync ) );
-    HANDLE_ERROR( cudaEventCreateWithFlags( &cp1, cudaEventDisableTiming | cudaEventBlockingSync ) );
+//    HANDLE_ERROR( cudaEventCreateWithFlags( &cp0, cudaEventDisableTiming | cudaEventBlockingSync ) );
+//    HANDLE_ERROR( cudaEventCreateWithFlags( &cp1, cudaEventDisableTiming | cudaEventBlockingSync ) );
+    HANDLE_ERROR( cudaEventCreateWithFlags( &cp0, cudaEventDisableTiming ) );
+    HANDLE_ERROR( cudaEventCreateWithFlags( &cp1, cudaEventDisableTiming ) );
+
 
     for(unsigned long r = 0; r < NUM_READS; ++r) {
         // Fill F1 and F2 with new data
