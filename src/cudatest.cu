@@ -1,14 +1,14 @@
 #include "gpu_utils.h"
-#include "cuda_c_mhamm_coal.h"
+#include "cuda_c_mmul_shared.h"
 
 int main() {
     // Size of matrices
-    const long A1 = 64;
+    const long A1 = 36;
     const long A2 = 64;
     const long B1 = 64;
-    const long B2 = 64;
-    const long C1 = 64;
-    const long C2 = 64;
+    const long B2 = 1750000;
+    const long C1 = 36;
+    const long C2 = 1750000;
 
     // Testing matrices
     float M1[A1 * A2];
@@ -52,7 +52,7 @@ int main() {
 
     // Kernel launch
     // *A, *B, *C, Arows, Acols, Brows, Bcols, Crows, Ccols
-    MatHammOuterCoal<<<dimGrid.x, dimBlock.x>>>(d_M1, d_M2, d_M3, A2, B2);
+    MatHamm<<<dimGrid.x, dimBlock.x>>>(d_M1, d_M2, d_M3, A1, A2, B1, B2, C1, C2);
     cudaError_t err = cudaGetLastError();
     std::cout << err << std::endl << std::endl;
 
