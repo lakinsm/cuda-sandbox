@@ -31,7 +31,7 @@ int main() {
     replaceAmbigs( r2 );
 
     // Generate example unsigned char encodings
-    int kmer_count = r1.length() - k + 1;
+    int kmer_count = (r1.length() - k + 1) + (r2.length() - k + 1);
     std::cout << kmer_count << std::endl;
     unsigned char *F1, *F2, *d_F1, *d_F2;
 
@@ -120,11 +120,13 @@ int main() {
 
     for(unsigned long r = 0; r < NUM_READS; ++r) {
         // Fill F1 and F2 with new data
-        for (int m = 0; m < kmer_count; ++m) {
+        for (int m = 0; m < kmer_count / 2; ++m) {
             for (int b = 0; b < k; ++b) {
-                F1[(m * k) + b] = reinterpret_cast<unsigned char&>(r1[m + b]);
-                F2[(m * k) + b] = reinterpret_cast<unsigned char&>(r2[m + b]);
-                //std::cout << F1[(m * k) + b];
+                if (m + b > (m * k) + b)
+                    F1[(m * k) + b] = reinterpret_cast<unsigned char&>(r1[m + b]);
+                else
+                    F2[(kmer_count - (r1.length() - k + 1)) + (m * k) + b] = reinterpret_cast<unsigned char&>(r2[m + b]);
+                std::cout << F1[(m * k) + b];
 //                F1[(m * k) + b] = 1;
 //                F2[(m * k) + b] = 1;
             }
