@@ -79,7 +79,7 @@ int main() {
     std::cout << "Number of elements in result array: " << kmer_count * T_cols;
     std::cout << ", with size " << (double)(kmer_count * T_cols * sizeof(unsigned char)) / 1000000 << " MB" << std::endl;
 
-    dim3 dimBlock(32, 32);  // Based on comments on StackOverflow for 2D threads
+    dim3 dimBlock(32, 8);  // Based on comments on StackOverflow for 2D threads
     dim3 dimGrid((T_cols + dimBlock.x - 1) / dimBlock.x, (kmer_count + dimBlock.y - 1) / dimBlock.y);
     std::cout << std::endl << "Grid/Block setup:" << std::endl;
     std::cout << dimGrid.x << ',' << dimGrid.y << ' ' << dimBlock.x << ',' << dimBlock.y << std::endl;
