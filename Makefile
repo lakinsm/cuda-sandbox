@@ -7,7 +7,7 @@ TARGET := bin/cudatest
 SRCEXT := cu
 SOURCES := $(shell find $(SRCDIR) -type f -name "*.$(SRCEXT)")
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
-CFLAGS := -g -std=c++11 -lcublas -lcurand -Xcompiler "-fopenmp -O3 -funroll-loops -march=native -mfpmath=sse"
+CFLAGS := -g -arch=sm_30 -std=c++11 -lcublas -lcurand -Xcompiler "-fopenmp -O3 -funroll-loops -march=native -mfpmath=sse"
 LIB := -lcublas -lgomp -lcuda
 INC := -I include
 

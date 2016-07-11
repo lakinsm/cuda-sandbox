@@ -1,0 +1,97 @@
+==10563== NVPROF is profiling process 10563, command: bin/cudatest
+64
+Input dimensions:
+Number of total elements in feature arrays: 8192, with size 0.008192 MB
+Number of elements in training array: 64000000, with size 64 MB
+Number of elements in result array: 64000000, with size 64 MB
+
+Grid/Block setup:
+7812,2 32,4
+
+GPU pipeline took: 
+Total: 0.119656 sec
+Per seq pair: 0.0059828 sec
+==10563== Profiling application: bin/cudatest
+==10563== Profiling result:
+   Start  Duration            Grid Size      Block Size     Regs*    SSMem*    DSMem*      Size  Throughput           Device   Context    Stream  Name
+1.20169s  11.114ms                    -               -         -         -         -  61.035MB  5.3631GB/s  GeForce GTX 770         1         7  [CUDA memcpy HtoD]
+1.21326s  2.5280us                    -               -         -         -         -  4.0000KB  1.5090GB/s  GeForce GTX 770         1        13  [CUDA memcpy HtoD]
+1.21327s  2.1440us                    -               -         -         -         -  4.0000KB  1.7792GB/s  GeForce GTX 770         1        14  [CUDA memcpy HtoD]
+1.21330s  11.674ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        13  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [223]
+1.22491s  11.716ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        14  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [230]
+1.22497s  1.6000us                    -               -         -         -         -  61.035MB   4e+04GB/s  GeForce GTX 770         1        13  [CUDA memset]
+1.23663s     704ns                    -               -         -         -         -  61.035MB   8e+04GB/s  GeForce GTX 770         1        14  [CUDA memset]
+1.23687s  2.5600us                    -               -         -         -         -  4.0000KB  1.4901GB/s  GeForce GTX 770         1        13  [CUDA memcpy HtoD]
+1.23717s  11.670ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        13  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [243]
+1.23718s  2.1120us                    -               -         -         -         -  4.0000KB  1.8062GB/s  GeForce GTX 770         1        14  [CUDA memcpy HtoD]
+1.24878s  11.720ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        14  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [250]
+1.24884s     480ns                    -               -         -         -         -  61.035MB   1e+05GB/s  GeForce GTX 770         1        13  [CUDA memset]
+1.26050s     672ns                    -               -         -         -         -  61.035MB   9e+04GB/s  GeForce GTX 770         1        14  [CUDA memset]
+1.26074s  2.7200us                    -               -         -         -         -  4.0000KB  1.4025GB/s  GeForce GTX 770         1        13  [CUDA memcpy HtoD]
+1.26104s  11.662ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        13  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [263]
+1.26104s  2.1440us                    -               -         -         -         -  4.0000KB  1.7792GB/s  GeForce GTX 770         1        14  [CUDA memcpy HtoD]
+1.27264s  11.708ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        14  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [270]
+1.27270s     480ns                    -               -         -         -         -  61.035MB   1e+05GB/s  GeForce GTX 770         1        13  [CUDA memset]
+1.28435s     800ns                    -               -         -         -         -  61.035MB   7e+04GB/s  GeForce GTX 770         1        14  [CUDA memset]
+1.28459s  2.6240us                    -               -         -         -         -  4.0000KB  1.4538GB/s  GeForce GTX 770         1        13  [CUDA memcpy HtoD]
+1.28489s  11.664ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        13  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [283]
+1.28490s  2.1760us                    -               -         -         -         -  4.0000KB  1.7531GB/s  GeForce GTX 770         1        14  [CUDA memcpy HtoD]
+1.29650s  11.717ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        14  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [290]
+1.29656s     512ns                    -               -         -         -         -  61.035MB   1e+05GB/s  GeForce GTX 770         1        13  [CUDA memset]
+1.30822s     608ns                    -               -         -         -         -  61.035MB   1e+05GB/s  GeForce GTX 770         1        14  [CUDA memset]
+1.30846s  2.4000us                    -               -         -         -         -  4.0000KB  1.5895GB/s  GeForce GTX 770         1        13  [CUDA memcpy HtoD]
+1.30876s  11.655ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        13  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [303]
+1.30877s  2.2080us                    -               -         -         -         -  4.0000KB  1.7277GB/s  GeForce GTX 770         1        14  [CUDA memcpy HtoD]
+1.32035s  11.690ms           (7812 2 1)        (32 4 1)        43  1.0000KB        0B         -           -  GeForce GTX 770         1        14  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long) [310]
+1.32041s     480ns                    -               -         -         -         -  61.035MB   1e+05GB/s  GeForce GTX 770         1        13  [CUDA memset]
+1.33204s     672ns                    -               -         -         -         -  61.035MB   9e+04GB/s  GeForce GTX 770         1        14  [CUDA memset]
+
+Regs: Number of registers used per CUDA thread. This number includes registers used internally by the CUDA driver and/or tools and can be more than what the compiler shows.
+SSMem: Static shared memory allocated per CUDA block.
+DSMem: Dynamic shared memory allocated per CUDA block.
+==10573== NVPROF is profiling process 10573, command: bin/cudatest
+64
+Input dimensions:
+Number of total elements in feature arrays: 8192, with size 0.008192 MB
+Number of elements in training array: 64000000, with size 64 MB
+Number of elements in result array: 64000000, with size 64 MB
+
+Grid/Block setup:
+7812,2 32,4
+
+GPU pipeline took: 
+Total: 0.118493 sec
+Per seq pair: 0.00592465 sec
+==10573== Profiling application: bin/cudatest
+==10573== Profiling result:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 91.29%  115.72ms        10  11.572ms  11.536ms  11.600ms  MatHamm(unsigned char*, unsigned char*, unsigned char*, long, long)
+  8.70%  11.033ms        11  1.0030ms  2.1120us  11.009ms  [CUDA memcpy HtoD]
+  0.01%  7.4880us        10     748ns     480ns  1.6640us  [CUDA memset]
+
+==10573== API calls:
+Time(%)      Time     Calls       Avg       Min       Max  Name
+ 52.86%  117.95ms         2  58.975ms  299.64us  117.65ms  cudaStreamSynchronize
+ 34.72%  77.460ms         4  19.365ms  5.1800us  42.817ms  cudaHostAlloc
+  6.25%  13.943ms         4  3.4857ms  4.7010us  7.0170ms  cudaFreeHost
+  4.94%  11.026ms         1  11.026ms  11.026ms  11.026ms  cudaMemcpy
+  0.46%  1.0263ms         5  205.26us  4.9210us  321.00us  cudaMalloc
+  0.24%  545.53us       182  2.9970us     136ns  124.28us  cuDeviceGetAttribute
+  0.20%  455.94us         5  91.188us  7.1040us  115.76us  cudaFree
+  0.12%  265.12us         1  265.12us  265.12us  265.12us  cudaGetDeviceProperties
+  0.07%  148.89us         2  74.447us  74.000us  74.894us  cuDeviceTotalMem
+  0.03%  69.023us        10  6.9020us  3.8330us  26.037us  cudaLaunch
+  0.02%  53.833us         2  26.916us  22.788us  31.045us  cuDeviceGetName
+  0.02%  49.263us        10  4.9260us  3.2220us  13.841us  cudaMemcpyAsync
+  0.02%  49.169us        10  4.9160us  3.7680us  10.884us  cuMemsetD8Async
+  0.02%  42.040us         2  21.020us  8.7040us  33.336us  cudaStreamCreate
+  0.00%  7.8930us        50     157ns     135ns     476ns  cudaSetupArgument
+  0.00%  7.2880us         2  3.6440us  1.1880us  6.1000us  cudaStreamDestroy
+  0.00%  7.0610us        10     706ns     437ns  1.7320us  cudaEventRecord
+  0.00%  5.4330us         1  5.4330us  5.4330us  5.4330us  cudaSetDevice
+  0.00%  2.7950us        10     279ns     165ns  1.0170us  cudaConfigureCall
+  0.00%  2.3380us         1  2.3380us  2.3380us  2.3380us  cudaGetDevice
+  0.00%  1.7660us         2     883ns     511ns  1.2550us  cudaEventCreateWithFlags
+  0.00%  1.5220us         3     507ns     142ns  1.1190us  cuDeviceGetCount
+  0.00%  1.4970us         2     748ns     459ns  1.0380us  cudaEventDestroy
+  0.00%  1.3780us         6     229ns     142ns     466ns  cuDeviceGet
