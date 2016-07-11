@@ -18,14 +18,14 @@ __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, lo
     __shared__ unsigned char Bs[BLOCK_SIZE][BLOCK_SIZE];
 
     for (int k = 0; k < (((ACols - 1) / BLOCK_SIZE)+1); ++k) {
-        if ((Row*ACols) + (k*BLOCK_SIZE) + tx > ARows * ACols )
+        if (k*BLOCK_SIZE + tx < ACols && Row < ARows)
             As[ty][tx] = 0;
         else
             As[ty][tx] = A[(Row*ACols) + (k*BLOCK_SIZE) + tx];
 
-//        if(((k*BLOCK_SIZE) + ty)*BCols + Col > BRows * BCols)
-//            Bs[ty][tx] = 0;
-//        else
+        if(k*BLOCK_SIZE + ty < BRows && Col < BCols)
+            Bs[ty][tx] = 0;
+        else
             Bs[ty][tx] = B[((k*BLOCK_SIZE) + ty)*BCols + Col];
         __syncthreads();
 
@@ -36,7 +36,7 @@ __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, lo
     }
 
     if ((Row < CRows) && (Col < CCols))
-        C[(Row * CCols) + Col]+=CValue;
+        C[((by * blockDim.y + ty)*CCols)+(bx*blockDim.x)+tx] = CValue;
 }
 
 // Some other things I'm playing with
