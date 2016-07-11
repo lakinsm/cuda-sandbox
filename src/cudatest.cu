@@ -14,7 +14,7 @@ int main() {
     // Need to add bounds checking to prevent segfaults in the kernel
     // Parameters
     const int k = 64;
-    const int NUM_READS = 1000;
+    const int NUM_READS = 10;
     //unsigned char *data_type;
 
     // Choose device
@@ -122,10 +122,14 @@ int main() {
         // Fill F1 and F2 with new data
         for (int m = 0; m < kmer_count / 2; ++m) {
             for (int b = 0; b < k; ++b) {
-                if (m + b > (m * k) + b)
-                    F1[(m * k) + b] = reinterpret_cast<unsigned char&>(r1[m + b]);
-                else
-                    F2[(kmer_count - (r1.length() - k + 1)) + (m * k) + b] = reinterpret_cast<unsigned char&>(r2[m + b]);
+                if (m + b > (m * k) + b) {
+                    F1[(m * k) + b] = reinterpret_cast<unsigned char &>(r1[m + b]);
+                    F2[(m * k) + b] = reinterpret_cast<unsigned char &>(r1[m + b]);
+                }
+                else {
+                    F1[(kmer_count - (r1.length() - k + 1)) + (m * k) + b] = reinterpret_cast<unsigned char &>(r2[m + b]);
+                    F2[(kmer_count - (r1.length() - k + 1)) + (m * k) + b] = reinterpret_cast<unsigned char &>(r2[m + b]);
+                }
                 std::cout << F1[(m * k) + b];
 //                F1[(m * k) + b] = 1;
 //                F2[(m * k) + b] = 1;
