@@ -19,7 +19,7 @@ void MatHammOnHost(unsigned char * A, unsigned char * B, unsigned char * C, int 
             C[i*numCColumns + j ] = 0;
             for (int k = 0; k < numCColumns; k++)
             {
-                C[i*numCColumns + j ] += ((A[i*numAColumns + k] ^ B[k*numBColumns + j]) && (A[i*numAColumns + k] ^ B[k*numBColumns + j] > 0);
+                C[i*numCColumns + j ] += ((A[i*numAColumns + k] ^ B[k*numBColumns + j]) && (A[i*numAColumns + k] ^ B[k*numBColumns + j] > 0));
             }
         }
     }
