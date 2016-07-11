@@ -142,6 +142,7 @@ int main() {
         MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, k, T_cols);
         MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, k, T_cols);
 
+        // TODO: DtoH copy is expensive, so we shouldn't do this if we can afford it
         // Enque copy back to host
 //        HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, kmer_count * T_cols * sizeof(unsigned char),
 //                                     cudaMemcpyDeviceToHost, stream0));
