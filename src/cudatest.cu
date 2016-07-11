@@ -164,7 +164,7 @@ int main() {
     HANDLE_ERROR( cudaStreamSynchronize( stream1 ) );
 
     QueryPerformanceCounter(&end);
-    std::cout << "GPU pipeline took: " << double(end - start) / 1000000 / kmer_count << " sec per seq" << std::endl;
+    std::cout << "GPU pipeline took: " << double(end - start) / 1000 / kmer_count << " usec per seq" << std::endl;
 
     /////////////
     // Cleanup //
