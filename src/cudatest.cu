@@ -162,7 +162,7 @@ int main() {
 
     QueryPerformanceCounter(&end);
     std::cout << "\nGPU pipeline took: \nTotal: " << double(end - start) / 1000000 << " sec" << std::endl;
-    std::cout << "Per seq pair: " << double(end - start) / 1000000 / NUM_READS / 2 << " sec" << std::endl;
+    std::cout << "Per seq pair: " << double(end - start) / 1000000 / NUM_READS / READ_BATCH_SIZE << " sec" << std::endl;
 
     /////////////
     // Cleanup //
