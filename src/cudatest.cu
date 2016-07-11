@@ -118,24 +118,11 @@ int main() {
     CUdeviceptr ptr1 = (CUdeviceptr) d_R1;
     CUdeviceptr ptr2 = (CUdeviceptr) d_R2;
 
-    for(unsigned long r = 0; r < NUM_READS; ++r) {
+    for(unsigned long r = 0; r < NUM_READS; r += 2) {
         // Fill F1 and F2 with new data
-        for (int m = 0; m < kmer_count / 2; ++m) {
-            for (int b = 0; b < k; ++b) {
-                if (m + b > (m * k) + b) {
-                    F1[(m * k) + b] = reinterpret_cast<unsigned char &>(r1[m + b]);
-                    F2[(m * k) + b] = reinterpret_cast<unsigned char &>(r1[m + b]);
-                }
-                else {
-                    F1[(kmer_count - (r1.length() - k + 1)) + (m * k) + b] = reinterpret_cast<unsigned char &>(r2[m + b]);
-                    F2[(kmer_count - (r1.length() - k + 1)) + (m * k) + b] = reinterpret_cast<unsigned char &>(r2[m + b]);
-                }
-                std::cout << F1[(m * k) + b];
-//                F1[(m * k) + b] = 1;
-//                F2[(m * k) + b] = 1;
-            }
-            std::cout << std::endl;
-        }
+        // r1 and r2 would be replaced with (read1, read2) and (read3, read4) respectively
+        load_kmer_array(r1, r2, F1, k);
+        load_kmer_array(r1, r2, F2, k);
 
         // Enque the memory streams in breadth-first order such that
         // the block scheduler launches kernels optimally
@@ -152,8 +139,6 @@ int main() {
         // Enque the kernel launches
         MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, k, T_cols);
         MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, k, T_cols);
-//        MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
-//        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
 
         // Enque copy back to host
         HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, kmer_count * T_cols * sizeof(unsigned char),
