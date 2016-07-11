@@ -10,25 +10,29 @@ int main() {
     /////////////////////
     // Encoding Matrix //
     /////////////////////
+    // TODO: Current all dimensions of inputs must be multiple of 32
+    // Need to add bounds checking to prevent segfaults in the kernel
     // Parameters
     const int k = 64;
-    const int NUM_READS = 100;
+    const int NUM_READS = 1000;
+    //unsigned char *data_type;
 
     // Choose device
     cudaSetDevice(1);
 
     // Training matrix size
-    const long T_cols = 64;
+    const long T_cols = 1000000;
 
     // Example data
-    std::string r1 = "TNGGCAGCCCGCCCACGTACAGATGTTGGCGGTGAGCGCTGCGCCTTTACCGGCCCGGCCGGGCATGCTGCGGGTGTGGTGGACGGCGGTCCGGCCGCGC";
-    std::string r2 = "TNGGCAGCCCGCCCACGTACAGATGTTGGCGGTGAGCGCTGCGCCTTTACCGGCCCGGCCGGGCATGCTGCGGGTGTGGTGGACGGCGGTCCGGCCGCGC";
+    std::string r1 = "TNGGCAGCCCGCCCACGTACAGATGTTGGCGGTGAGCGCTGCGCCTTTACCGGCCCGGCCGGGCATGCTGCGGGTGTGGTGGACGGCGGTCCGGC"; //CGCGC";
+    std::string r2 = "TNGGCAGCCCGCCCACGTACAGATGTTGGCGGTGAGCGCTGCGCCTTTACCGGCCCGGCCGGGCATGCTGCGGGTGTGGTGGACGGCGGTCCGGC"; //CGCGC";
     std::string nucs = "ACGT";
     replaceAmbigs( r1 );
     replaceAmbigs( r2 );
 
     // Generate example unsigned char encodings
     int kmer_count = r1.length() - k + 1;
+    std::cout << kmer_count << std::endl;
     unsigned char *F1, *F2, *d_F1, *d_F2;
 
     // Pinned memory for streaming; will have to account for dynamic size at some point
@@ -57,7 +61,7 @@ int main() {
     int idx;
     for(unsigned long i = 0; i < k * T_cols; ++i) {
         idx = std::rand() % 4;
-        T[i] = (unsigned char)(nucs[idx]-'0');
+        T[i] = reinterpret_cast<unsigned char&>(nucs[idx]);
         //T[i] = 1;
     }
 
@@ -65,7 +69,7 @@ int main() {
     HANDLE_ERROR( cudaMemcpy(d_T, T, k * T_cols * sizeof(unsigned char), cudaMemcpyHostToDevice) );
 
     // We don't need T on host anymore
-    //std::free(T);
+    std::free(T);
 
     /* Usually the below would be something like this:
      * int N_THREADS_PER_BLOCK = 256; (or 16x16, 32x8 for 2D)
@@ -79,8 +83,8 @@ int main() {
     std::cout << "Number of elements in result array: " << kmer_count * T_cols;
     std::cout << ", with size " << (double)(kmer_count * T_cols * sizeof(unsigned char)) / 1000000 << " MB" << std::endl;
 
-    dim3 dimBlock(32, 8);  // Based on comments on StackOverflow for 2D threads
-    dim3 dimGrid((T_cols + dimBlock.x - 1) / dimBlock.x, (kmer_count + dimBlock.y - 1) / dimBlock.y);
+    dim3 dimBlock(BLOCK_SIZE, 4);  // Based on comments on StackOverflow for 2D threads
+    dim3 dimGrid((T_cols + BLOCK_SIZE - 1) / (BLOCK_SIZE * 4), (kmer_count + BLOCK_SIZE - 1) / BLOCK_SIZE);
     std::cout << std::endl << "Grid/Block setup:" << std::endl;
     std::cout << dimGrid.x << ',' << dimGrid.y << ' ' << dimBlock.x << ',' << dimBlock.y << std::endl;
 
@@ -140,8 +144,10 @@ int main() {
         HANDLE_ERROR( cudaEventRecord( cp1, stream1 ) );
 
         // Enque the kernel launches
-        MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
-        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
+        MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, k, T_cols);
+        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, k, T_cols);
+//        MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
+//        MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, kmer_count, k, k, T_cols, kmer_count, T_cols);
 
         // Enque copy back to host
         HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, kmer_count * T_cols * sizeof(unsigned char),
@@ -162,17 +168,18 @@ int main() {
     HANDLE_ERROR( cudaStreamSynchronize( stream1 ) );
 
     QueryPerformanceCounter(&end);
-    std::cout << "GPU pipeline took: " << double(end - start) / 1000 / kmer_count << " usec per seq" << std::endl;
+    std::cout << "\nGPU pipeline took: \nTotal: " << double(end - start) / 1000000 << " sec" << std::endl;
+    std::cout << "Per seq pair: " << double(end - start) / 1000000 / NUM_READS << " sec" << std::endl;
 
     /////////////
     // Cleanup //
     /////////////
     // Free device memory
-    HANDLE_ERROR( cudaFree(d_F1) );
-    HANDLE_ERROR( cudaFree(d_F2) );
-    HANDLE_ERROR( cudaFree(d_T) );
-    HANDLE_ERROR( cudaFree(d_R1) );
-    HANDLE_ERROR( cudaFree(d_R2) );
+    HANDLE_ERROR( cudaFree( d_F1  ) );
+    HANDLE_ERROR( cudaFree( d_F2 ) );
+    HANDLE_ERROR( cudaFree( d_T ) );
+    HANDLE_ERROR( cudaFree( d_R1 ) );
+    HANDLE_ERROR( cudaFree( d_R2 ) );
     HANDLE_ERROR( cudaStreamDestroy( stream0 ) );
     HANDLE_ERROR( cudaStreamDestroy( stream1 ) );
     HANDLE_ERROR( cudaEventDestroy( cp0 ) );
@@ -181,18 +188,18 @@ int main() {
 
 
     // Output to test results
-    write_matrix(R1, 1, T_cols);
-    std::cout << std::endl;
+//    write_matrix(R1, 1, T_cols);
+//    std::cout << std::endl;
     // Produce gold standard on CPU
-    MatHammOnHost(F1, T, R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
-    write_matrix(R1, 1, T_cols);
-    std::free(T);
+//    MatHammOnHost(F1, T, R1, kmer_count, k, k, T_cols, kmer_count, T_cols);
+//    write_matrix(R1, 1, T_cols);
+//    std::free(T);
 
     // Free host memory here if dynamically allocated
-    HANDLE_ERROR( cudaFreeHost(F1) );
-    HANDLE_ERROR( cudaFreeHost(F2) );
-    HANDLE_ERROR( cudaFreeHost(R1) );
-    HANDLE_ERROR( cudaFreeHost(R2) );
+    HANDLE_ERROR( cudaFreeHost( F1 ) );
+    HANDLE_ERROR( cudaFreeHost( F2 ) );
+    HANDLE_ERROR( cudaFreeHost( R1 ) );
+    HANDLE_ERROR( cudaFreeHost( R2 ) );
 
     return 0;
 }
