@@ -3,12 +3,6 @@
 // Thread block size
 #define BLOCK_SIZE 32
 
-__global__ void FillZeros(unsigned char* X, long n) {
-    while(n-- > 0) {
-        X[n] = 0;
-    }
-}
-
 __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, long ARows, long ACols, long BRows, long BCols, long CRows, long CCols) {
     
     int tx = threadIdx.x;
@@ -23,15 +17,15 @@ __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, lo
     __shared__ unsigned char As[BLOCK_SIZE][BLOCK_SIZE];
     __shared__ unsigned char Bs[BLOCK_SIZE][BLOCK_SIZE];
 
-    for (int k = 0; k < (((ACols - 1) / BLOCK_SIZE)+1); k++) {
+    for (int k = 0; k < (((ACols - 1) / BLOCK_SIZE)+1); ++k) {
         if ((Row*ACols) + (k*BLOCK_SIZE) + tx > ARows * ACols )
             As[ty][tx] = 0;
         else
             As[ty][tx] = A[(Row*ACols) + (k*BLOCK_SIZE) + tx];
 
-        if(((k*BLOCK_SIZE) + ty)*BCols + Col > BRows * BCols)
-            Bs[ty][tx] = 0;
-        else
+//        if(((k*BLOCK_SIZE) + ty)*BCols + Col > BRows * BCols)
+//            Bs[ty][tx] = 0;
+//        else
             Bs[ty][tx] = B[((k*BLOCK_SIZE) + ty)*BCols + Col];
         __syncthreads();
 

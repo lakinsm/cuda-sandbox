@@ -155,7 +155,6 @@ int main() {
         // Block host from proceeding until copy to GPU is complete
         HANDLE_ERROR( cudaEventSynchronize( cp0 ) );
         HANDLE_ERROR( cudaEventSynchronize( cp1 ) );
-        cudaStreamSynchronize( stream0 );
 
         // Clear previous values
         cuMemsetD8Async( ptr1, 0, kmer_count * T_cols, stream0);
