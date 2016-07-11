@@ -122,10 +122,10 @@ int main() {
         // Fill F1 and F2 with new data
         for (int m = 0; m < kmer_count; ++m) {
             for (int b = 0; b < k; ++b) {
-//                F1[(m * k) + b] = (unsigned char) r1[m + b] - '0';
-//                F2[(m * k) + b] = (unsigned char) r2[m + b] - '0';
-                F1[(m * k) + b] = 1;
-                F2[(m * k) + b] = 1;
+                F1[(m * k) + b] = (unsigned char) r1[m + b];
+                F2[(m * k) + b] = (unsigned char) r2[m + b];
+//                F1[(m * k) + b] = 1;
+//                F2[(m * k) + b] = 1;
             }
         }
 
