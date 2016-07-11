@@ -124,9 +124,11 @@ int main() {
             for (int b = 0; b < k; ++b) {
                 F1[(m * k) + b] = reinterpret_cast<unsigned char&>(r1[m + b]);
                 F2[(m * k) + b] = reinterpret_cast<unsigned char&>(r2[m + b]);
+                std::cout << F1[(m * k) + b];
 //                F1[(m * k) + b] = 1;
 //                F2[(m * k) + b] = 1;
             }
+            std::endl;
         }
 
         // Enque the memory streams in breadth-first order such that
