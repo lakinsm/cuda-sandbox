@@ -15,6 +15,7 @@ int main() {
     // Parameters
     const int k = 64;
     const int NUM_READS = 10;
+    const int READ_BATCH_SIZE = 2;
     //unsigned char *data_type;
 
     // Choose device
@@ -31,6 +32,7 @@ int main() {
     replaceAmbigs( r2 );
 
     // Generate example unsigned char encodings
+    // TODO: Replace with some kind of automated calculation or upper bound on read length
     int kmer_count = (r1.length() - k + 1) + (r2.length() - k + 1);
     std::cout << kmer_count << std::endl;
     unsigned char *F1, *F2, *d_F1, *d_F2;
@@ -118,9 +120,9 @@ int main() {
     CUdeviceptr ptr1 = (CUdeviceptr) d_R1;
     CUdeviceptr ptr2 = (CUdeviceptr) d_R2;
 
-    for(unsigned long r = 0; r < NUM_READS; r += 2) {
+    for(unsigned long r = 0; r < NUM_READS; r += READ_BATCH_SIZE) {
         // Fill F1 and F2 with new data
-        // r1 and r2 would be replaced with (read1, read2) and (read3, read4) respectively
+        // TODO: r1 and r2 would be replaced with a reference to fqpair and an integer READ_BATCH_SIZE to feed into F1
         load_kmer_array(r1, r2, F1, k);
         load_kmer_array(r1, r2, F2, k);
 
