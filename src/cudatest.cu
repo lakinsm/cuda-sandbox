@@ -134,7 +134,7 @@ int main() {
 //                F1[(m * k) + b] = 1;
 //                F2[(m * k) + b] = 1;
             }
-            //std::cout << std::endl;
+            std::cout << std::endl;
         }
 
         // Enque the memory streams in breadth-first order such that
