@@ -135,8 +135,8 @@ int main() {
 
         // Insert event markers into the stream to tell host
         // when F1 and F2 are safe to overwrite in host memory
-        HANDLE_ERROR( cudaEventRecord( cp0, stream0 ) );
-        HANDLE_ERROR( cudaEventRecord( cp1, stream1 ) );
+//        HANDLE_ERROR( cudaEventRecord( cp0, stream0 ) );
+//        HANDLE_ERROR( cudaEventRecord( cp1, stream1 ) );
 
         // Enque the kernel launches
         MatHamm <<< dimGrid, dimBlock, 0, stream0 >>> (d_F1, d_T, d_R1, k, T_cols);
