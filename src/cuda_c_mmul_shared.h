@@ -36,7 +36,7 @@ __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, lo
         __syncthreads();
 
         for (int n = 0; n < BLOCK_SIZE; ++n) {
-            CValue += ( (As[ty][n] != Bs[n][tx]) && ((As[ty][n] & Bs[n][tx]) > 0));
+            CValue += (As[ty][n] ^ Bs[n][tx]) && (As[ty][n] & Bs[n][tx] > 0);
         }
         __syncthreads();
     }
