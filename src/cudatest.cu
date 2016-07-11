@@ -118,7 +118,6 @@ int main() {
     CUdeviceptr ptr1 = (CUdeviceptr) d_R1;
     CUdeviceptr ptr2 = (CUdeviceptr) d_R2;
 
-
     for(unsigned long r = 0; r < NUM_READS; ++r) {
         // Fill F1 and F2 with new data
         for (int m = 0; m < kmer_count; ++m) {
@@ -129,8 +128,6 @@ int main() {
                 F2[(m * k) + b] = 1;
             }
         }
-
-
 
         // Enque the memory streams in breadth-first order such that
         // the block scheduler launches kernels optimally
@@ -167,7 +164,7 @@ int main() {
     HANDLE_ERROR( cudaStreamSynchronize( stream1 ) );
 
     QueryPerformanceCounter(&end);
-    std::cout << "GPU pipeline took: " << double(end - start) / 1000000 << " sec" << std::endl;
+    std::cout << "GPU pipeline took: " << double(end - start) / 1000000 / kmer_count << " sec per seq" << std::endl;
 
     /////////////
     // Cleanup //

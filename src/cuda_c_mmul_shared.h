@@ -42,7 +42,7 @@ __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, lo
     }
 
     if ((Row < CRows) && (Col < CCols))
-        C[(Row * CCols) + Col]=CValue;
+        C[(Row * CCols) + Col]+=CValue;
 }
 
 // Some other things I'm playing with
