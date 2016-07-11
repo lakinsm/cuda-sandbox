@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 
 // Thread block size
-#define BLOCK_SIZE 8
+#define BLOCK_SIZE 16
 
 __global__ void MatHamm(unsigned char* A, unsigned char* B, unsigned char* C, long ARows, long ACols, long BRows, long BCols, long CRows, long CCols) {
     
