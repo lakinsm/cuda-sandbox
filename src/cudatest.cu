@@ -143,10 +143,10 @@ int main() {
         MatHamm <<< dimGrid, dimBlock, 0, stream1 >>> (d_F2, d_T, d_R2, k, T_cols);
 
         // Enque copy back to host
-        HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, kmer_count * T_cols * sizeof(unsigned char),
-                                     cudaMemcpyDeviceToHost, stream0));
-        HANDLE_ERROR(cudaMemcpyAsync(R2, d_R2, kmer_count * T_cols * sizeof(unsigned char),
-                                     cudaMemcpyDeviceToHost, stream1));
+//        HANDLE_ERROR(cudaMemcpyAsync(R1, d_R1, kmer_count * T_cols * sizeof(unsigned char),
+//                                     cudaMemcpyDeviceToHost, stream0));
+//        HANDLE_ERROR(cudaMemcpyAsync(R2, d_R2, kmer_count * T_cols * sizeof(unsigned char),
+//                                     cudaMemcpyDeviceToHost, stream1));
         // Block host from proceeding until copy to GPU is complete
 //        HANDLE_ERROR( cudaEventSynchronize( cp0 ) );
 //        HANDLE_ERROR( cudaEventSynchronize( cp1 ) );
