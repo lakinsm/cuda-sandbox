@@ -148,8 +148,8 @@ int main() {
         HANDLE_ERROR(cudaMemcpyAsync(R2, d_R2, kmer_count * T_cols * sizeof(unsigned char),
                                      cudaMemcpyDeviceToHost, stream1));
         // Block host from proceeding until copy to GPU is complete
-        HANDLE_ERROR( cudaEventSynchronize( cp0 ) );
-        HANDLE_ERROR( cudaEventSynchronize( cp1 ) );
+//        HANDLE_ERROR( cudaEventSynchronize( cp0 ) );
+//        HANDLE_ERROR( cudaEventSynchronize( cp1 ) );
 
         // Clear previous values
         cuMemsetD8Async( ptr1, 0, kmer_count * T_cols, stream0);
