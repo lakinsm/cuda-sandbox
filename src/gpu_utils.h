@@ -8,6 +8,24 @@
 #include <sys/time.h>
 #include <functional>
 
+void MatHammOnHost(unsigned char * A, unsigned char * B, unsigned char * C, int numARows,
+                       int numAColumns, int numBRows, int numBColumns,
+                       int numCRows, int numCColumns)
+{
+    for (int i=0; i < numARows; i++)
+    {
+        for (int j = 0; j < numAColumns; j++)
+        {
+            C[i*numCColumns + j ] = 0;
+            for (int k = 0; k < numCColumns; k++)
+            {
+                C[i*numCColumns + j ] += (A[i*numAColumns + k] != B[k*numBColumns + j]);
+            }
+        }
+    }
+    return;
+}
+
 // For performance timings
 void QueryPerformanceCounter( uint64_t* val )
 {
@@ -17,10 +35,10 @@ void QueryPerformanceCounter( uint64_t* val )
     *val = tv.tv_sec * 1000000 + tv.tv_usec;
 }
 
-void write_matrix(const float* X, const long m, const long n) {
+void write_matrix(const unsigned char* X, const long m, const long n) {
     for(int i = 0; i < m; ++i) {
         for(int j = 0; j < n; ++j) {
-            std::cout << X[(i * n) + j] << ' ';
+            std::cout << (int)X[(i * n) + j] << ' ';
         }
         std::cout << std::endl;
     }
@@ -29,7 +47,7 @@ void write_matrix(const float* X, const long m, const long n) {
 
 void cuda_error(cudaError_t e, int code_line) {
     if(e != cudaSuccess) {
-        std::cerr << "CUDA execution error: " << e << " at line " << code_line << std::endl;
+        std::cerr << "CUDA execution error: " << cudaGetErrorString(e) << " at line " << code_line << std::endl;
         std::exit(EXIT_FAILURE);
     }
 }
