@@ -32,14 +32,14 @@ void replaceAmbigs(std::string &str) {
 template <typename T>
 void load_kmer_array(const std::string &r1, const std::string &r2, const T &f, const int k) {
     int m = 0;
-    for(; m < r.length() - k + 1; ++m) {
+    for(; m < r1.length() - k + 1; ++m) {
         for(int n = 0; n < k; ++n) {
-            f[(m * k) + n] = reinterpret_cast<unsigned char &>(r1[m + n]);
+            f[(m * k) + n] = (unsigned char)(r1[m + n]);
         }
     }
     for(int t = 0; t < r2.length() - k + 1; ++m, ++t) {
         for(int n = 0; n < k; ++n) {
-            f[(m * k) + n] = reinterpret_cast<unsigned char &>(r2[t + n]);
+            f[(m * k) + n] = (unsigned char )(r2[t + n]);
         }
     }
 }
