@@ -16,6 +16,7 @@ int main() {
     const int k = 64;
     const int NUM_READS = 10;
     const int READ_BATCH_SIZE = 2;
+    const int MAX_READ_LEN = 100;
     //unsigned char *data_type;
 
     // Choose device
